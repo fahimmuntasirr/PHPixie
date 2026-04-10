@@ -13,14 +13,20 @@ export default function CreateRecipePage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (data: RecipeFormData) => {
+  const handleSubmit = async (data: RecipeFormData) => {
     setIsSubmitting(true);
-    // Simulate API call
-    console.log("Creating recipe:", data);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const res = await fetch("/api/recipes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to create recipe");
       router.push("/recipes");
-    }, 1000);
+    } catch (error) {
+      console.error("Error creating recipe:", error);
+      setIsSubmitting(false);
+    }
   };
 
   return (

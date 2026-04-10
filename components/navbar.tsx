@@ -60,9 +60,11 @@ export default function Navbar() {
             </svg>
           </div>
 
-          <Button className="bg-pink-400 hover:bg-pink-500 text-white rounded-full px-6 h-9 text-sm font-medium shadow-none border-none">
-            Upload
-          </Button>
+          <Link href="/recipes/create">
+            <Button className="bg-pink-400 hover:bg-pink-500 text-white rounded-full px-6 h-9 text-sm font-medium shadow-none border-none">
+              Upload
+            </Button>
+          </Link>
           <Button
             variant="outline"
             className="border-pink-400 text-pink-400 hover:bg-pink-50 hover:text-pink-500 rounded-full px-6 h-9 text-sm font-medium"

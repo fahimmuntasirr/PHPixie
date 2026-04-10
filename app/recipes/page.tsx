@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/navbar";
@@ -8,94 +8,6 @@ import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import RecipeCard, { type Recipe } from "@/components/recipes/recipe-card";
 import DeleteRecipeDialog from "@/components/recipes/delete-recipe-dialog";
-
-// Mock data — will be replaced with API calls later
-const MOCK_RECIPES: Recipe[] = [
-  {
-    id: "1",
-    title: "Classic Chocolate Chip Cookies",
-    description:
-      "Crispy on the edges, chewy in the center, and absolutely loaded with chocolate chips. The perfect cookie recipe that never fails.",
-    category: "Cookies",
-    difficulty: "Easy",
-    prepTime: "15 mins",
-    cookTime: "12 mins",
-    servings: "24",
-    imageUrl: "",
-    tags: ["chocolate", "classic", "quick"],
-    createdAt: "2024-03-15",
-  },
-  {
-    id: "2",
-    title: "Sourdough Bread",
-    description:
-      "Artisan-style sourdough with a crisp golden crust and an open, airy crumb. Takes patience but rewards you with the best bread you'll ever eat.",
-    category: "Bread",
-    difficulty: "Hard",
-    prepTime: "30 mins",
-    cookTime: "45 mins",
-    servings: "1",
-    imageUrl: "",
-    tags: ["sourdough", "artisan", "fermented"],
-    createdAt: "2024-03-10",
-  },
-  {
-    id: "3",
-    title: "Red Velvet Cupcakes",
-    description:
-      "Moist, tender red velvet cupcakes topped with smooth cream cheese frosting. A showstopper for any occasion.",
-    category: "Cupcakes",
-    difficulty: "Medium",
-    prepTime: "20 mins",
-    cookTime: "22 mins",
-    servings: "12",
-    imageUrl: "",
-    tags: ["red-velvet", "cream-cheese", "celebration"],
-    createdAt: "2024-03-05",
-  },
-  {
-    id: "4",
-    title: "French Croissants",
-    description:
-      "Buttery, flaky, golden croissants made from scratch. The lamination process creates those beautiful honeycomb layers.",
-    category: "Pastries",
-    difficulty: "Expert",
-    prepTime: "3 hrs",
-    cookTime: "18 mins",
-    servings: "8",
-    imageUrl: "",
-    tags: ["french", "butter", "laminated"],
-    createdAt: "2024-02-28",
-  },
-  {
-    id: "5",
-    title: "Blueberry Muffins",
-    description:
-      "Bakery-style muffins bursting with fresh blueberries and topped with a crunchy streusel. Perfect for breakfast or a snack.",
-    category: "Muffins",
-    difficulty: "Easy",
-    prepTime: "10 mins",
-    cookTime: "25 mins",
-    servings: "12",
-    imageUrl: "",
-    tags: ["blueberry", "breakfast", "streusel"],
-    createdAt: "2024-02-20",
-  },
-  {
-    id: "6",
-    title: "Strawberry Shortcake",
-    description:
-      "Fluffy homemade biscuits layered with macerated strawberries and fresh whipped cream. A classic summer dessert.",
-    category: "Cakes",
-    difficulty: "Medium",
-    prepTime: "25 mins",
-    cookTime: "15 mins",
-    servings: "6",
-    imageUrl: "",
-    tags: ["strawberry", "summer", "whipped-cream"],
-    createdAt: "2024-02-15",
-  },
-];
 
 const CATEGORIES = [
   "All",
@@ -113,12 +25,44 @@ const DIFFICULTIES = ["All", "Easy", "Medium", "Hard", "Expert"];
 
 export default function RecipesPage() {
   const router = useRouter();
-  const [recipes, setRecipes] = useState<Recipe[]>(MOCK_RECIPES);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [difficultyFilter, setDifficultyFilter] = useState("All");
   const [deleteTarget, setDeleteTarget] = useState<Recipe | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Fetch recipes from API
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const res = await fetch("/api/recipes");
+        if (!res.ok) throw new Error("Failed to fetch");
+        const data = await res.json();
+        setRecipes(
+          data.map((r: Record<string, unknown>) => ({
+            id: r.id,
+            title: r.title,
+            description: r.description,
+            category: r.category,
+            difficulty: r.difficulty,
+            prepTime: r.prepTime,
+            cookTime: r.cookTime,
+            servings: r.servings,
+            imageUrl: r.imageUrl || "",
+            tags: (r.tags as string[]) || [],
+            createdAt: r.createdAt,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching recipes:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRecipes();
+  }, []);
 
   const filteredRecipes = useMemo(() => {
     return recipes.filter((recipe) => {
@@ -146,15 +90,21 @@ export default function RecipesPage() {
     if (recipe) setDeleteTarget(recipe);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
     setIsDeleting(true);
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const res = await fetch(`/api/recipes/${deleteTarget.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete");
       setRecipes((prev) => prev.filter((r) => r.id !== deleteTarget.id));
+    } catch (error) {
+      console.error("Error deleting recipe:", error);
+    } finally {
       setDeleteTarget(null);
       setIsDeleting(false);
-    }, 600);
+    }
   };
 
   const stats = useMemo(() => {
@@ -311,7 +261,12 @@ export default function RecipesPage() {
 
         {/* Recipe Grid */}
         <section className="max-w-7xl mx-auto px-6 py-8">
-          {filteredRecipes.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-20">
+              <div className="w-12 h-12 rounded-full border-4 border-pink-200 border-t-pink-400 animate-spin mx-auto mb-4" />
+              <p className="text-sm text-gray-500">Loading recipes...</p>
+            </div>
+          ) : filteredRecipes.length > 0 ? (
             <>
               <p className="text-sm text-gray-500 mb-5">
                 Showing{" "}
