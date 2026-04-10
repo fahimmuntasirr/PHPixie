@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/navbar";
@@ -9,154 +9,73 @@ import RecipeForm, {
   type RecipeFormData,
 } from "@/components/recipes/recipe-form";
 
-// Mock data for editing — will be replaced with API call
-const MOCK_RECIPE_DATA: Record<string, RecipeFormData> = {
-  "1": {
-    title: "Classic Chocolate Chip Cookies",
-    description:
-      "Crispy on the edges, chewy in the center, and absolutely loaded with chocolate chips. The perfect cookie recipe that never fails.",
-    category: "Cookies",
-    difficulty: "Easy",
-    prepTime: "15 mins",
-    cookTime: "12 mins",
-    servings: "24",
-    imageUrl: "",
-    tags: ["chocolate", "classic", "quick"],
-    ingredients: [
-      { id: "i1", name: "All-purpose flour", amount: "2.25", unit: "cups" },
-      { id: "i2", name: "Butter, softened", amount: "1", unit: "cups" },
-      { id: "i3", name: "Granulated sugar", amount: "0.75", unit: "cups" },
-      { id: "i4", name: "Brown sugar, packed", amount: "0.75", unit: "cups" },
-      { id: "i5", name: "Eggs", amount: "2", unit: "pieces" },
-      { id: "i6", name: "Vanilla extract", amount: "1", unit: "tsp" },
-      { id: "i7", name: "Baking soda", amount: "1", unit: "tsp" },
-      { id: "i8", name: "Salt", amount: "1", unit: "tsp" },
-      { id: "i9", name: "Chocolate chips", amount: "2", unit: "cups" },
-    ],
-    steps: [
-      {
-        id: "s1",
-        instruction:
-          "Preheat oven to 375°F (190°C). Line baking sheets with parchment paper.",
-      },
-      {
-        id: "s2",
-        instruction:
-          "In a large bowl, cream together the butter, granulated sugar, and brown sugar until smooth and fluffy.",
-      },
-      {
-        id: "s3",
-        instruction:
-          "Beat in the eggs one at a time, then stir in the vanilla extract.",
-      },
-      {
-        id: "s4",
-        instruction:
-          "In a separate bowl, whisk together the flour, baking soda, and salt. Gradually blend into the butter mixture.",
-      },
-      {
-        id: "s5",
-        instruction:
-          "Fold in the chocolate chips. Drop rounded tablespoon of dough onto the prepared baking sheets.",
-      },
-      {
-        id: "s6",
-        instruction:
-          "Bake for 9 to 12 minutes, or until golden brown. Cool on the baking sheet for a few minutes before transferring to a wire rack.",
-      },
-    ],
-  },
-  "2": {
-    title: "Sourdough Bread",
-    description:
-      "Artisan-style sourdough with a crisp golden crust and an open, airy crumb. Takes patience but rewards you with the best bread you'll ever eat.",
-    category: "Bread",
-    difficulty: "Hard",
-    prepTime: "30 mins",
-    cookTime: "45 mins",
-    servings: "1",
-    imageUrl: "",
-    tags: ["sourdough", "artisan", "fermented"],
-    ingredients: [
-      { id: "i1", name: "Bread flour", amount: "500", unit: "g" },
-      { id: "i2", name: "Water", amount: "350", unit: "ml" },
-      { id: "i3", name: "Sourdough starter", amount: "100", unit: "g" },
-      { id: "i4", name: "Salt", amount: "10", unit: "g" },
-    ],
-    steps: [
-      {
-        id: "s1",
-        instruction:
-          "Mix flour and water, autolyse for 30 minutes.",
-      },
-      {
-        id: "s2",
-        instruction:
-          "Add starter and salt, mix until well combined. Perform stretch and folds every 30 minutes for 2 hours.",
-      },
-      {
-        id: "s3",
-        instruction:
-          "Bulk ferment at room temperature for 4-6 hours until doubled in size.",
-      },
-      {
-        id: "s4",
-        instruction:
-          "Shape the dough and place in a banneton. Cold retard in the fridge for 12-16 hours.",
-      },
-      {
-        id: "s5",
-        instruction:
-          "Preheat Dutch oven at 500°F (260°C). Score the dough and bake covered for 20 minutes, then uncovered for 25 minutes at 450°F (230°C).",
-      },
-    ],
-  },
-  "3": {
-    title: "Red Velvet Cupcakes",
-    description:
-      "Moist, tender red velvet cupcakes topped with smooth cream cheese frosting. A showstopper for any occasion.",
-    category: "Cupcakes",
-    difficulty: "Medium",
-    prepTime: "20 mins",
-    cookTime: "22 mins",
-    servings: "12",
-    imageUrl: "",
-    tags: ["red-velvet", "cream-cheese", "celebration"],
-    ingredients: [
-      { id: "i1", name: "All-purpose flour", amount: "1.5", unit: "cups" },
-      { id: "i2", name: "Cocoa powder", amount: "2", unit: "tbsp" },
-      { id: "i3", name: "Buttermilk", amount: "1", unit: "cups" },
-      { id: "i4", name: "Red food coloring", amount: "1", unit: "tbsp" },
-      { id: "i5", name: "Cream cheese", amount: "8", unit: "oz" },
-    ],
-    steps: [
-      {
-        id: "s1",
-        instruction: "Preheat oven to 350°F (175°C). Line cupcake tin with liners.",
-      },
-      {
-        id: "s2",
-        instruction: "Mix dry ingredients. In another bowl, combine wet ingredients including food coloring.",
-      },
-      {
-        id: "s3",
-        instruction: "Gradually combine wet and dry, mixing until just combined. Fill liners 2/3 full.",
-      },
-      {
-        id: "s4",
-        instruction: "Bake for 20-22 minutes. Cool completely before frosting with cream cheese frosting.",
-      },
-    ],
-  },
-};
-
 export default function EditRecipePage() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [recipeData, setRecipeData] = useState<RecipeFormData | null>(null);
 
-  const recipeData = MOCK_RECIPE_DATA[id];
+  // Fetch recipe data from API
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const res = await fetch(`/api/recipes/${id}`);
+        if (!res.ok) {
+          setRecipeData(null);
+          return;
+        }
+        const data = await res.json();
+        setRecipeData({
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          difficulty: data.difficulty,
+          prepTime: data.prepTime,
+          cookTime: data.cookTime,
+          servings: data.servings,
+          imageUrl: data.imageUrl || "",
+          tags: data.tags || [],
+          ingredients: (data.ingredients || []).map(
+            (ing: { id: string; name: string; amount: string; unit: string }) => ({
+              id: ing.id,
+              name: ing.name,
+              amount: ing.amount,
+              unit: ing.unit,
+            })
+          ),
+          steps: (data.steps || []).map(
+            (step: { id: string; instruction: string }) => ({
+              id: step.id,
+              instruction: step.instruction,
+            })
+          ),
+        });
+      } catch (error) {
+        console.error("Error fetching recipe:", error);
+        setRecipeData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRecipe();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <main className="flex-1 bg-gray-50/50">
+          <div className="max-w-3xl mx-auto px-6 py-20 text-center">
+            <div className="w-12 h-12 rounded-full border-4 border-amber-200 border-t-amber-400 animate-spin mx-auto mb-4" />
+            <p className="text-sm text-gray-500">Loading recipe...</p>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   if (!recipeData) {
     return (
@@ -199,14 +118,20 @@ export default function EditRecipePage() {
     );
   }
 
-  const handleSubmit = (data: RecipeFormData) => {
+  const handleSubmit = async (data: RecipeFormData) => {
     setIsSubmitting(true);
-    // Simulate API call
-    console.log("Updating recipe:", id, data);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const res = await fetch(`/api/recipes/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Failed to update recipe");
       router.push("/recipes");
-    }, 1000);
+    } catch (error) {
+      console.error("Error updating recipe:", error);
+      setIsSubmitting(false);
+    }
   };
 
   return (
