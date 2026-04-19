@@ -85,6 +85,11 @@ export default function Navbar() {
                       Upload
                     </Button>
                   </Link>
+                  <Link href="/recipes/sell">
+                    <Button className="bg-emerald-400 hover:bg-emerald-500 text-white rounded-full px-6 h-9 text-sm font-medium shadow-none border-none">
+                      Sell
+                    </Button>
+                  </Link>
                   <Link href="/profile" className="ml-2">
                     <Button variant="ghost" className="text-gray-600 hover:text-pink-500 rounded-full px-4 h-9 text-sm font-medium">
                       <User className="h-4 w-4 mr-2" />

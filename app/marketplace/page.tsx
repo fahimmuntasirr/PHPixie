@@ -3,53 +3,66 @@ import { ArrowUpRight, ShoppingBag, Star } from "lucide-react";
 
 import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
+import { db } from "@/db/config";
+import { marketplaceProduct } from "@/db/schema";
+import { desc } from "drizzle-orm";
 
-const featuredItems = [
-  {
-    name: "Starter Baking Kit",
-    seller: "OvenCraft Studio",
-    price: "$24",
-    rating: 4.8,
-    gradient: "from-pink-200 via-rose-200 to-pink-300",
-  },
-  {
-    name: "Silicone Muffin Set",
-    seller: "BakeNest",
-    price: "$16",
-    rating: 4.7,
-    gradient: "from-amber-200 via-orange-200 to-amber-300",
-  },
-  {
-    name: "Chef Piping Bundle",
-    seller: "CreamLine Tools",
-    price: "$19",
-    rating: 4.9,
-    gradient: "from-teal-200 via-emerald-200 to-green-300",
-  },
-  {
-    name: "Decorating Sprinkles Box",
-    seller: "SweetShelf",
-    price: "$11",
-    rating: 4.6,
-    gradient: "from-violet-200 via-fuchsia-200 to-pink-200",
-  },
-  {
-    name: "Premium Whisk Pro",
-    seller: "Kitchen Forge",
-    price: "$14",
-    rating: 4.8,
-    gradient: "from-slate-200 via-zinc-200 to-slate-300",
-  },
-  {
-    name: "Glass Mixing Bowls",
-    seller: "Home Dough",
-    price: "$27",
-    rating: 4.9,
-    gradient: "from-cyan-200 via-sky-200 to-blue-300",
-  },
-];
+const CATEGORY_EMOJIS: Record<string, string> = {
+  "Tools": "🔧",
+  "Kits": "📦",
+  "Decorations": "✨",
+  "Supplies": "🧴",
+  "Other": "🛍️",
+};
 
-export default function MarketplacePage() {
+function getCategoryEmoji(category: string): string {
+  return CATEGORY_EMOJIS[category] || CATEGORY_EMOJIS["Other"];
+}
+
+function getProductGradient(category: string): string {
+  const gradients: Record<string, string> = {
+    "Tools": "from-slate-200 via-zinc-200 to-slate-300",
+    "Kits": "from-pink-200 via-rose-200 to-pink-300",
+    "Decorations": "from-violet-200 via-fuchsia-200 to-pink-200",
+    "Supplies": "from-amber-200 via-orange-200 to-amber-300",
+    "Other": "from-gray-200 via-slate-200 to-gray-300",
+  };
+  return gradients[category] || gradients["Other"];
+}
+
+interface MarketplaceProduct {
+  id: string;
+  recipeId: string;
+  name: string;
+  description: string;
+  seller: string;
+  price: string | number;
+  rating: string | number;
+  imageUrl?: string | null;
+  category: string;
+}
+
+export default async function MarketplacePage() {
+  let featuredItems: MarketplaceProduct[] = [];
+
+  try {
+    const products = await db.query.marketplaceProduct.findMany({
+      orderBy: [desc(marketplaceProduct.createdAt)],
+      limit: 12,
+    });
+
+    // Convert Decimal types to plain numbers for serialization
+    featuredItems = products.slice(0, 6).map(item => ({
+      ...item,
+      price: typeof item.price === 'string' ? parseFloat(item.price) : Number(item.price),
+      rating: typeof item.rating === 'string' ? parseFloat(item.rating) : Number(item.rating),
+    }));
+  } catch (error) {
+    // Table may not exist yet or database connection issue
+    console.error("Failed to fetch marketplace products:", error);
+    featuredItems = [];
+  }
+
   return (
     <>
       <main className="flex-1 bg-gray-50/50">
@@ -90,36 +103,53 @@ export default function MarketplacePage() {
 
         <section className="max-w-7xl mx-auto px-6 py-10 md:py-14">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredItems.map((item) => (
-              <article
-                key={item.name}
-                className="rounded-2xl border border-gray-100 bg-white overflow-hidden hover:border-pink-200 hover:shadow-md transition-all"
-              >
-                <div
-                  className={`h-40 bg-linear-to-br ${item.gradient} flex items-center justify-center`}
-                >
-                  <span className="text-5xl">🧁</span>
-                </div>
+            {featuredItems.length > 0 ? (
+              featuredItems.map((item) => {
+                const emoji = getCategoryEmoji(item.category);
+                const gradient = getProductGradient(item.category);
+                const price = `$${Number(item.price).toFixed(2)}`;
+                const rating = Number(item.rating);
 
-                <div className="p-5">
-                  <h2 className="text-base font-semibold text-gray-900">{item.name}</h2>
-                  <p className="mt-1 text-sm text-gray-500">by {item.seller}</p>
+                return (
+                  <Link
+                    key={item.id}
+                    href={`/recipes/${item.recipeId}/view`}
+                    className="rounded-2xl border border-gray-100 bg-white overflow-hidden hover:border-pink-200 hover:shadow-md transition-all block group"
+                  >
+                    <div
+                      className={`h-40 bg-linear-to-br ${gradient} flex items-center justify-center`}
+                    >
+                      <span className="text-5xl">{emoji}</span>
+                    </div>
 
-                  <div className="mt-4 flex items-center justify-between">
-                    <p className="text-xl font-bold text-pink-500">{item.price}</p>
-                    <p className="inline-flex items-center gap-1 text-sm font-medium text-gray-600">
-                      <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                      {item.rating}
-                    </p>
-                  </div>
+                    <div className="p-5">
+                      <h2 className="text-base font-semibold text-gray-900">{item.name}</h2>
+                      <p className="mt-1 text-sm text-gray-500">by {item.seller}</p>
 
-                  <button className="mt-4 w-full h-10 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors inline-flex items-center justify-center gap-2">
-                    View Item
-                    <ArrowUpRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </article>
-            ))}
+                      <div className="mt-4 flex items-center justify-between">
+                        <p className="text-xl font-bold text-pink-500">{price}</p>
+                        <p className="inline-flex items-center gap-1 text-sm font-medium text-gray-600">
+                          <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                          {Math.min(5, Math.max(0, Number(rating))).toFixed(1)}
+                        </p>
+                      </div>
+
+                      <div className="mt-4 w-full h-10 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors inline-flex items-center justify-center gap-2 cursor-pointer group-hover:bg-gray-800">
+                        View Item
+                        <ArrowUpRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })
+            ) : (
+              <div className="col-span-full rounded-2xl border border-dashed border-gray-200 bg-white p-12 text-center">
+                <ShoppingBag className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 text-sm">
+                  No products available yet. Check back soon!
+                </p>
+              </div>
+            )}
           </div>
         </section>
       </main>

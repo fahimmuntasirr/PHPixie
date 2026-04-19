@@ -15,26 +15,26 @@ export default function ShareSection() {
           <div className="relative h-96 flex items-center justify-center">
             {/* Top left image */}
             <div
-              className={`absolute top-0 left-4 w-52 h-52 rounded-3xl bg-gradient-to-br ${foodImages[0].gradient} ${foodImages[0].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
+              className={`absolute top-0 left-4 w-52 h-52 rounded-3xl bg-linear-to-br ${foodImages[0].gradient} ${foodImages[0].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
             >
               <span className="text-7xl">{foodImages[0].emoji}</span>
-              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-gradient-to-br from-pink-300 to-pink-400 border-2 border-white shadow" />
+              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-linear-to-br from-pink-300 to-pink-400 border-2 border-white shadow" />
             </div>
 
             {/* Top right image */}
             <div
-              className={`absolute top-4 right-16 w-44 h-52 rounded-3xl bg-gradient-to-br ${foodImages[1].gradient} ${foodImages[1].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
+              className={`absolute top-4 right-16 w-44 h-52 rounded-3xl bg-linear-to-br ${foodImages[1].gradient} ${foodImages[1].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
             >
               <span className="text-7xl">{foodImages[1].emoji}</span>
-              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-gradient-to-br from-amber-300 to-amber-400 border-2 border-white shadow" />
+              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-linear-to-br from-amber-300 to-amber-400 border-2 border-white shadow" />
             </div>
 
             {/* Bottom left image */}
             <div
-              className={`absolute bottom-0 left-16 w-56 h-44 rounded-3xl bg-gradient-to-br ${foodImages[2].gradient} ${foodImages[2].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
+              className={`absolute bottom-0 left-16 w-56 h-44 rounded-3xl bg-linear-to-br ${foodImages[2].gradient} ${foodImages[2].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
             >
               <span className="text-7xl">{foodImages[2].emoji}</span>
-              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-gradient-to-br from-violet-300 to-violet-400 border-2 border-white shadow" />
+              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-linear-to-br from-violet-300 to-violet-400 border-2 border-white shadow" />
             </div>
           </div>
 
