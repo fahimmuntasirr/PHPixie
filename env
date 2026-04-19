@@ -1,3 +1,0 @@
-DATABASE_URL=postgresql://neondb_owner:npg_qhWcdP5F4rwp@ep-solitary-resonance-a1yu9pjp-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
-BETTER_AUTH_SECRET=pkYdEL6Ih9rZOgt28EWdOEEfUCngn8Wd
-BETTER_AUTH_URL=http://localhost:3000
