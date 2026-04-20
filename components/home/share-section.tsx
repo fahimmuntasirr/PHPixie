@@ -1,4 +1,8 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
+import Link from "next/link";
+
+import { authClient } from "@/lib/auth-client";
 
 const foodImages = [
   { emoji: "🥐", gradient: "from-amber-200 via-orange-200 to-amber-300", rotate: "-rotate-3" },
@@ -7,6 +11,11 @@ const foodImages = [
 ];
 
 export default function ShareSection() {
+  const { data: session, isPending } = authClient.useSession();
+
+  const ctaHref = session ? "/recipes/create" : "/sign-up";
+  const ctaLabel = session ? "Share Recipe" : "Sign Up Now";
+
   return (
     <section className="bg-white py-20">
       <div className="max-w-7xl mx-auto px-6">
@@ -56,9 +65,13 @@ export default function ShareSection() {
               like you.
             </p>
 
-            <Button className="bg-pink-400 hover:bg-pink-500 text-white rounded-full px-8 py-5 text-sm font-semibold shadow-lg shadow-pink-200/50 border-none">
-              Sign Up Now
-            </Button>
+            <Link
+              href={ctaHref}
+              aria-label={ctaLabel}
+              className="inline-flex items-center justify-center bg-pink-400 hover:bg-pink-500 text-white rounded-full px-8 py-5 text-sm font-semibold shadow-lg shadow-pink-200/50 border-none transition-colors"
+            >
+              {isPending ? "Loading..." : ctaLabel}
+            </Link>
           </div>
         </div>
       </div>

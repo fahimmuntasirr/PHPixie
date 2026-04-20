@@ -20,6 +20,7 @@ interface Recipe {
   imageUrl?: string;
   tags: string[];
   createdAt: string;
+  listed?: boolean;
 }
 
 export default function SellRecipesPage() {
@@ -48,6 +49,11 @@ export default function SellRecipesPage() {
   }, []);
 
   const handleToggleRecipe = (recipeId: string) => {
+    const recipe = recipes.find((item) => item.id === recipeId);
+    if (recipe?.listed) {
+      return;
+    }
+
     setSelectedRecipes((prev) => ({
       ...prev,
       [recipeId]: {
@@ -177,21 +183,33 @@ export default function SellRecipesPage() {
                       <div className="flex items-start gap-4">
                         <button
                           onClick={() => handleToggleRecipe(recipe.id)}
+                          disabled={recipe.listed}
                           className={`shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                            item.selected
+                            recipe.listed
+                              ? "cursor-not-allowed border-gray-200 bg-gray-100"
+                              : item.selected
                               ? "bg-emerald-400 border-emerald-400"
                               : "border-gray-300 hover:border-emerald-300"
                           }`}
                         >
-                          {item.selected && (
+                          {recipe.listed ? (
+                            <span className="text-[10px] font-bold text-gray-400">✓</span>
+                          ) : item.selected ? (
                             <Check className="w-4 h-4 text-white" />
-                          )}
+                          ) : null}
                         </button>
 
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-semibold text-gray-900">
-                            {recipe.title}
-                          </h3>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-gray-900">
+                              {recipe.title}
+                            </h3>
+                            {recipe.listed && (
+                              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700 uppercase tracking-wide">
+                                Already Listed
+                              </span>
+                            )}
+                          </div>
                           <p className="text-sm text-gray-500 mt-1 line-clamp-2">
                             {recipe.description}
                           </p>

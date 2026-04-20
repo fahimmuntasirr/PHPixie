@@ -2,7 +2,7 @@ import { db } from "@/db/config";
 import { recipe, marketplaceProduct } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 export async function POST(request: Request) {
   try {
@@ -46,6 +46,27 @@ export async function POST(request: Request) {
       return Response.json(
         { error: "You can only sell your own recipes" },
         { status: 403 }
+      );
+    }
+
+    const selectedRecipeIds = validatedItems.map((item: { recipeId: string; price: number }) => item.recipeId);
+    const alreadyListedRecipes = await db
+      .select({ recipeId: marketplaceProduct.recipeId })
+      .from(marketplaceProduct)
+      .where(inArray(marketplaceProduct.recipeId, selectedRecipeIds));
+
+    const alreadyListedRecipeIds = new Set(
+      alreadyListedRecipes.map((item) => item.recipeId).filter((id): id is string => Boolean(id))
+    );
+
+    const duplicateSelections = validatedItems.filter((item: { recipeId: string; price: number }) =>
+      alreadyListedRecipeIds.has(item.recipeId)
+    );
+
+    if (duplicateSelections.length > 0) {
+      return Response.json(
+        { error: "One or more selected recipes are already listed on the marketplace" },
+        { status: 409 }
       );
     }
 

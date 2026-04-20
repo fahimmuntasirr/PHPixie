@@ -1,0 +1,3 @@
+ALTER TABLE "marketplace_product" ADD COLUMN "recipe_id" uuid NOT NULL;--> statement-breakpoint
+ALTER TABLE "marketplace_product" ADD CONSTRAINT "marketplace_product_recipe_id_recipe_id_fk" FOREIGN KEY ("recipe_id") REFERENCES "public"."recipe"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "product_recipeId_idx" ON "marketplace_product" USING btree ("recipe_id");

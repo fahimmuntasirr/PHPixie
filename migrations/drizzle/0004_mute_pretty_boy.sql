@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "product_recipeId_unique_idx" ON "marketplace_product" USING btree ("recipe_id");

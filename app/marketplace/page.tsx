@@ -4,8 +4,8 @@ import { ArrowUpRight, ShoppingBag, Star } from "lucide-react";
 import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db/config";
-import { marketplaceProduct } from "@/db/schema";
-import { desc } from "drizzle-orm";
+import { marketplaceProduct, recipe } from "@/db/schema";
+import { desc, inArray } from "drizzle-orm";
 
 const CATEGORY_EMOJIS: Record<string, string> = {
   "Tools": "🔧",
@@ -32,7 +32,7 @@ function getProductGradient(category: string): string {
 
 interface MarketplaceProduct {
   id: string;
-  recipeId: string;
+  recipeId: string | null;
   name: string;
   description: string;
   seller: string;
@@ -42,8 +42,15 @@ interface MarketplaceProduct {
   category: string;
 }
 
+interface LinkedRecipePreview {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl?: string | null;
+}
+
 export default async function MarketplacePage() {
-  let featuredItems: MarketplaceProduct[] = [];
+  let featuredItems: Array<MarketplaceProduct & { linkedRecipe?: LinkedRecipePreview | null }> = [];
 
   try {
     const products = await db.query.marketplaceProduct.findMany({
@@ -51,11 +58,30 @@ export default async function MarketplacePage() {
       limit: 12,
     });
 
+    const recipeIds = Array.from(
+      new Set(products.map((product) => product.recipeId).filter((id): id is string => Boolean(id)))
+    );
+
+    const linkedRecipes = recipeIds.length
+      ? await db
+          .select({
+            id: recipe.id,
+            title: recipe.title,
+            description: recipe.description,
+            imageUrl: recipe.imageUrl,
+          })
+          .from(recipe)
+          .where(inArray(recipe.id, recipeIds))
+      : [];
+
+    const linkedRecipeMap = new Map(linkedRecipes.map((item) => [item.id, item]));
+
     // Convert Decimal types to plain numbers for serialization
     featuredItems = products.slice(0, 6).map(item => ({
       ...item,
       price: typeof item.price === 'string' ? parseFloat(item.price) : Number(item.price),
       rating: typeof item.rating === 'string' ? parseFloat(item.rating) : Number(item.rating),
+      linkedRecipe: item.recipeId ? linkedRecipeMap.get(item.recipeId) ?? null : null,
     }));
   } catch (error) {
     // Table may not exist yet or database connection issue
@@ -109,22 +135,35 @@ export default async function MarketplacePage() {
                 const gradient = getProductGradient(item.category);
                 const price = `$${Number(item.price).toFixed(2)}`;
                 const rating = Number(item.rating);
+                const recipeHref = item.recipeId ? `/recipes/${item.recipeId}/view` : null;
+                const buyHref = `/marketplace/${item.id}/buy`;
+                const displayImage = item.linkedRecipe?.imageUrl || item.imageUrl;
+                const displayDescription = item.linkedRecipe?.description || item.description;
 
                 return (
-                  <Link
+                  <article
                     key={item.id}
-                    href={`/recipes/${item.recipeId}/view`}
-                    className="rounded-2xl border border-gray-100 bg-white overflow-hidden hover:border-pink-200 hover:shadow-md transition-all block group"
+                    className="rounded-2xl border border-gray-100 bg-white overflow-hidden hover:border-pink-200 hover:shadow-md transition-all group"
                   >
-                    <div
-                      className={`h-40 bg-linear-to-br ${gradient} flex items-center justify-center`}
-                    >
-                      <span className="text-5xl">{emoji}</span>
+                    <div className={`h-40 bg-linear-to-br ${gradient} flex items-center justify-center overflow-hidden`}>
+                      {displayImage ? (
+                        <img
+                          src={displayImage}
+                          alt={item.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <span className="text-5xl">{emoji}</span>
+                      )}
                     </div>
 
                     <div className="p-5">
                       <h2 className="text-base font-semibold text-gray-900">{item.name}</h2>
                       <p className="mt-1 text-sm text-gray-500">by {item.seller}</p>
+
+                      <p className="mt-3 text-sm text-gray-600 leading-relaxed">
+                        {displayDescription}
+                      </p>
 
                       <div className="mt-4 flex items-center justify-between">
                         <p className="text-xl font-bold text-pink-500">{price}</p>
@@ -134,12 +173,26 @@ export default async function MarketplacePage() {
                         </p>
                       </div>
 
-                      <div className="mt-4 w-full h-10 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors inline-flex items-center justify-center gap-2 cursor-pointer group-hover:bg-gray-800">
-                        View Item
-                        <ArrowUpRight className="w-4 h-4" />
+                      <div className={`mt-5 gap-3 ${recipeHref ? "grid grid-cols-2" : "grid grid-cols-1"}`}>
+                        {recipeHref ? (
+                          <Link
+                            href={recipeHref}
+                            className="h-10 rounded-xl border border-pink-200 text-pink-500 text-sm font-medium hover:bg-pink-50 transition-colors inline-flex items-center justify-center gap-2"
+                          >
+                            View Recipe
+                          </Link>
+                        ) : null}
+
+                        <Link
+                          href={buyHref}
+                          className="h-10 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors inline-flex items-center justify-center gap-2 group-hover:bg-gray-800"
+                        >
+                          Buy
+                          <ArrowUpRight className="w-4 h-4" />
+                        </Link>
                       </div>
                     </div>
-                  </Link>
+                  </article>
                 );
               })
             ) : (

@@ -4,6 +4,7 @@ import {
   timestamp,
   decimal,
   index,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import { recipe } from "./recipe-schema";
@@ -12,9 +13,9 @@ export const marketplaceProduct = pgTable(
   "marketplace_product",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    recipeId: uuid("recipe_id")
-      .notNull()
-      .references(() => recipe.id, { onDelete: "cascade" }),
+    recipeId: uuid("recipe_id").references(() => recipe.id, {
+      onDelete: "cascade",
+    }),
     name: text("name").notNull(),
     description: text("description").notNull(),
     seller: text("seller").notNull(),
@@ -31,5 +32,6 @@ export const marketplaceProduct = pgTable(
   (table) => [
     index("product_category_idx").on(table.category),
     index("product_recipeId_idx").on(table.recipeId),
+    uniqueIndex("product_recipeId_unique_idx").on(table.recipeId),
   ]
 );
