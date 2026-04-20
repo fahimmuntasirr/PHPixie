@@ -1,0 +1,1 @@
+ALTER TABLE "marketplace_product" ALTER COLUMN "recipe_id" DROP NOT NULL;

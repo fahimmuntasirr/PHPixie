@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import Link from "next/link";
+
+import { getHomeRecipeStyle, type HomeRecipe } from "./home-data";
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -19,30 +22,25 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-const categories = [
-  "All Categories",
-  "Cakes",
-  "Bread",
-  "Muffins",
-  "Cupcakes",
-  "Cookies",
-  "Croissant",
-  "Others",
-];
+interface DiscoverSectionProps {
+  recipes: HomeRecipe[];
+}
 
-const recipes = [
-  { name: "Coconut Cake", emoji: "🎂", gradient: "from-stone-200 via-gray-200 to-stone-300", rating: 3.5, views: 1234 },
-  { name: "Milk Cake", emoji: "🍞", gradient: "from-yellow-200 via-amber-200 to-yellow-300", rating: 4, views: 1234 },
-  { name: "Strawberry Cupcake", emoji: "🧁", gradient: "from-pink-200 via-rose-200 to-pink-300", rating: 3.5, views: 1234 },
-  { name: "Custard", emoji: "🍮", gradient: "from-amber-200 via-orange-200 to-amber-300", rating: 3, views: 1234 },
-  { name: "Custard", emoji: "🍮", gradient: "from-orange-200 via-amber-200 to-orange-300", rating: 4, views: 1234 },
-  { name: "Macaroons", emoji: "🍬", gradient: "from-amber-300 via-yellow-200 to-amber-300", rating: 4.5, views: 1234 },
-  { name: "Rounded Churros", emoji: "🍩", gradient: "from-pink-300 via-rose-200 to-pink-300", rating: 3, views: 1234 },
-  { name: "Cookies", emoji: "🍪", gradient: "from-amber-200 via-yellow-200 to-amber-300", rating: 4, views: 1234 },
-];
-
-export default function DiscoverSection() {
+export default function DiscoverSection({ recipes }: DiscoverSectionProps) {
   const [activeCategory, setActiveCategory] = useState("All Categories");
+
+  const categories = useMemo(() => {
+    return ["All Categories", ...Array.from(new Set(recipes.map((recipe) => recipe.category)))];
+  }, [recipes]);
+
+  const visibleRecipes = useMemo(() => {
+    const filtered =
+      activeCategory === "All Categories"
+        ? recipes
+        : recipes.filter((recipe) => recipe.category === activeCategory);
+
+    return filtered.slice(0, 8);
+  }, [activeCategory, recipes]);
 
   return (
     <section className="bg-white py-16">
@@ -89,54 +87,73 @@ export default function DiscoverSection() {
 
         {/* Recipe Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {recipes.map((recipe, index) => (
-            <div
-              key={`${recipe.name}-${index}`}
-              className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-pink-200 transition-all"
-            >
-              {/* Image */}
-              <div
-                className={`w-full h-48 bg-gradient-to-br ${recipe.gradient} flex items-center justify-center relative`}
+          {visibleRecipes.map((recipe) => {
+            const style = getHomeRecipeStyle(recipe.category);
+
+            return (
+              <Link
+                key={recipe.id}
+                href={`/recipes/${recipe.id}/view`}
+                className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-pink-200 transition-all"
               >
-                <span className="text-6xl group-hover:scale-110 transition-transform">
-                  {recipe.emoji}
-                </span>
-              </div>
-
-              {/* Content */}
-              <div className="p-4">
-                {/* Avatar stack */}
-                <div className="flex -space-x-2 mb-2">
-                  {[0, 1, 2].map((i) => (
-                    <div
-                      key={i}
-                      className="w-6 h-6 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 border-2 border-white"
+                <div className={`w-full h-48 bg-linear-to-br ${style.gradient} flex items-center justify-center relative overflow-hidden`}>
+                  {recipe.imageUrl ? (
+                    <img
+                      src={recipe.imageUrl}
+                      alt={recipe.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                     />
-                  ))}
+                  ) : (
+                    <span className="text-6xl group-hover:scale-110 transition-transform">
+                      {style.emoji}
+                    </span>
+                  )}
+                  <div className="absolute top-3 left-3">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-xs font-medium text-gray-700 shadow-sm">
+                      {style.emoji} {recipe.category}
+                    </span>
+                  </div>
                 </div>
 
-                <h3 className="font-semibold text-gray-800 text-sm">
-                  {recipe.name}
-                </h3>
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-6 h-6 rounded-full bg-linear-to-br from-gray-300 to-gray-400 border-2 border-white flex items-center justify-center text-[9px] font-bold text-white">
+                      {recipe.user?.name?.charAt(0).toUpperCase() ?? "A"}
+                    </div>
+                    <span className="text-xs text-gray-500 truncate">
+                      {recipe.user?.name ?? "Anonymous"}
+                    </span>
+                  </div>
 
-                <div className="flex items-center justify-between mt-1">
-                  <StarRating rating={Math.floor(recipe.rating)} />
-                  <span className="text-xs text-gray-500">
-                    {recipe.views} Views
-                  </span>
-                </div>
+                  <h3 className="font-semibold text-gray-800 text-sm line-clamp-1">
+                    {recipe.title}
+                  </h3>
 
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-[10px] text-pink-400 bg-pink-50 px-2 py-0.5 rounded-full font-medium">
-                    3h 50m 2s ago
-                  </span>
-                  <button className="text-xs font-semibold text-pink-400 hover:text-pink-500 transition-colors">
-                    Learn more
-                  </button>
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                    {recipe.description}
+                  </p>
+
+                  <div className="flex items-center justify-between mt-2">
+                    <StarRating
+                      rating={Math.max(3, Math.min(5, recipe.tags.length || 4))}
+                    />
+                    <span className="text-xs text-gray-500">
+                      {recipe.prepTime}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-3">
+                    <span className="text-[10px] text-pink-400 bg-pink-50 px-2 py-0.5 rounded-full font-medium">
+                      {recipe.cookTime} cook
+                    </span>
+                    <span className="text-xs font-semibold text-pink-400 group-hover:text-pink-500 transition-colors">
+                      Learn more →
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>

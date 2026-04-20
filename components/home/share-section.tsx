@@ -1,4 +1,8 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
+import Link from "next/link";
+
+import { authClient } from "@/lib/auth-client";
 
 const foodImages = [
   { emoji: "🥐", gradient: "from-amber-200 via-orange-200 to-amber-300", rotate: "-rotate-3" },
@@ -7,6 +11,11 @@ const foodImages = [
 ];
 
 export default function ShareSection() {
+  const { data: session, isPending } = authClient.useSession();
+
+  const ctaHref = session ? "/recipes/create" : "/sign-up";
+  const ctaLabel = session ? "Share Recipe" : "Sign Up Now";
+
   return (
     <section className="bg-white py-20">
       <div className="max-w-7xl mx-auto px-6">
@@ -15,26 +24,26 @@ export default function ShareSection() {
           <div className="relative h-96 flex items-center justify-center">
             {/* Top left image */}
             <div
-              className={`absolute top-0 left-4 w-52 h-52 rounded-3xl bg-gradient-to-br ${foodImages[0].gradient} ${foodImages[0].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
+              className={`absolute top-0 left-4 w-52 h-52 rounded-3xl bg-linear-to-br ${foodImages[0].gradient} ${foodImages[0].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
             >
               <span className="text-7xl">{foodImages[0].emoji}</span>
-              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-gradient-to-br from-pink-300 to-pink-400 border-2 border-white shadow" />
+              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-linear-to-br from-pink-300 to-pink-400 border-2 border-white shadow" />
             </div>
 
             {/* Top right image */}
             <div
-              className={`absolute top-4 right-16 w-44 h-52 rounded-3xl bg-gradient-to-br ${foodImages[1].gradient} ${foodImages[1].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
+              className={`absolute top-4 right-16 w-44 h-52 rounded-3xl bg-linear-to-br ${foodImages[1].gradient} ${foodImages[1].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
             >
               <span className="text-7xl">{foodImages[1].emoji}</span>
-              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-gradient-to-br from-amber-300 to-amber-400 border-2 border-white shadow" />
+              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-linear-to-br from-amber-300 to-amber-400 border-2 border-white shadow" />
             </div>
 
             {/* Bottom left image */}
             <div
-              className={`absolute bottom-0 left-16 w-56 h-44 rounded-3xl bg-gradient-to-br ${foodImages[2].gradient} ${foodImages[2].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
+              className={`absolute bottom-0 left-16 w-56 h-44 rounded-3xl bg-linear-to-br ${foodImages[2].gradient} ${foodImages[2].rotate} shadow-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform`}
             >
               <span className="text-7xl">{foodImages[2].emoji}</span>
-              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-gradient-to-br from-violet-300 to-violet-400 border-2 border-white shadow" />
+              <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-linear-to-br from-violet-300 to-violet-400 border-2 border-white shadow" />
             </div>
           </div>
 
@@ -56,9 +65,13 @@ export default function ShareSection() {
               like you.
             </p>
 
-            <Button className="bg-pink-400 hover:bg-pink-500 text-white rounded-full px-8 py-5 text-sm font-semibold shadow-lg shadow-pink-200/50 border-none">
-              Sign Up Now
-            </Button>
+            <Link
+              href={ctaHref}
+              aria-label={ctaLabel}
+              className="inline-flex items-center justify-center bg-pink-400 hover:bg-pink-500 text-white rounded-full px-8 py-5 text-sm font-semibold shadow-lg shadow-pink-200/50 border-none transition-colors"
+            >
+              {isPending ? "Loading..." : ctaLabel}
+            </Link>
           </div>
         </div>
       </div>

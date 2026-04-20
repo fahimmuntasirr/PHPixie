@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import type { HomeRecipe } from "./home-data";
+import { getHomeRecipeStyle } from "./home-data";
 
 function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "md" }) {
   const sizeClass = size === "sm" ? "w-3 h-3" : "w-4 h-4";
@@ -18,29 +20,46 @@ function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "md
   );
 }
 
-function FeaturedRecipeCard() {
+function FeaturedRecipeCard({ recipe }: { recipe?: HomeRecipe }) {
+  const style = getHomeRecipeStyle(recipe?.category ?? "Other");
+  const title = recipe?.title ?? "No recipes yet";
+  const author = recipe?.user?.name ?? "Add your first recipe";
+  const description = recipe?.description ?? "Create a recipe to feature it here.";
+  const imageUrl = recipe?.imageUrl;
+
   return (
     <div className="relative w-full max-w-md">
       {/* Main card */}
       <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-pink-200/30">
-        <div className="w-full h-80 bg-gradient-to-br from-amber-200 via-orange-300 to-amber-400 flex items-center justify-center relative">
-          <span className="text-6xl">🥧</span>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        <div className={`w-full h-80 bg-linear-to-br ${style.gradient} flex items-center justify-center relative overflow-hidden`}>
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={title}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            <span className="text-6xl">{style.emoji}</span>
+          )}
+          <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
         </div>
 
         {/* Overlay content */}
         <div className="absolute top-4 left-4">
           <p className="text-white font-semibold text-lg drop-shadow-md">
-            Great Apple Pie
+            {title}
           </p>
           <div className="flex items-center gap-2 mt-1">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-pink-300 to-pink-400 border-2 border-white" />
-            <span className="text-white/90 text-sm drop-shadow-md">Kritika</span>
+            <div className="w-6 h-6 rounded-full bg-linear-to-br from-pink-300 to-pink-400 border-2 border-white" />
+            <span className="text-white/90 text-sm drop-shadow-md">{author}</span>
           </div>
+          <p className="max-w-xs text-white/80 text-xs mt-2 line-clamp-2 drop-shadow-md">
+            {description}
+          </p>
         </div>
 
         {/* Bottom stats */}
-        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/60 to-transparent flex items-end justify-between">
+        <div className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-linear-to-t from-black/60 to-transparent flex items-end justify-between">
           <div>
             <p className="text-white/70 text-xs">Ratings:</p>
             <StarRating rating={5} size="sm" />
@@ -48,9 +67,9 @@ function FeaturedRecipeCard() {
           <div className="text-right">
             <p className="text-white/70 text-xs">Prep time:</p>
             <div className="flex items-center gap-1">
-              <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded">12h</span>
-              <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded">43m</span>
-              <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded">42s</span>
+              <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded">{recipe?.prepTime ?? "--"}</span>
+              <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded">{recipe?.cookTime ?? "--"}</span>
+              <span className="bg-white/20 backdrop-blur-sm text-white text-xs px-2 py-0.5 rounded">{recipe?.servings ?? "--"}</span>
             </div>
           </div>
         </div>
@@ -60,23 +79,27 @@ function FeaturedRecipeCard() {
       <div className="absolute -left-6 top-1/2 -translate-y-1/4 w-24 h-24 rounded-full border-2 border-pink-300 bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-lg">
         <div className="text-center">
           <p className="text-[8px] font-bold text-pink-400 uppercase tracking-widest leading-tight">
-            Recipes
+            {recipe?.category ?? "Recipes"}
           </p>
-          <p className="text-[7px] text-gray-500 mt-0.5">Live Recipes</p>
+          <p className="text-[7px] text-gray-500 mt-0.5">Latest from database</p>
         </div>
       </div>
 
       {/* Small secondary card (peek) */}
-      <div className="absolute -right-4 top-4 w-20 h-32 rounded-2xl bg-gradient-to-br from-blue-200 via-indigo-200 to-blue-300 shadow-lg overflow-hidden opacity-60">
+      <div className={`absolute -right-4 top-4 w-20 h-32 rounded-2xl bg-linear-to-br ${style.gradient} shadow-lg overflow-hidden opacity-60`}>
         <div className="w-full h-full flex items-center justify-center">
-          <span className="text-2xl">🧁</span>
+          <span className="text-2xl">{style.emoji}</span>
         </div>
       </div>
     </div>
   );
 }
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  recipe?: HomeRecipe;
+}
+
+export default function HeroSection({ recipe }: HeroSectionProps) {
   return (
     <section className="relative overflow-hidden bg-white">
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-24">
@@ -127,7 +150,7 @@ export default function HeroSection() {
 
           {/* Right - Featured Card */}
           <div className="flex justify-center lg:justify-end">
-            <FeaturedRecipeCard />
+            <FeaturedRecipeCard recipe={recipe} />
           </div>
         </div>
       </div>

@@ -8,6 +8,34 @@
       "when": 1775312311566,
       "tag": "0000_blue_aqueduct",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776624030366,
+      "tag": "0001_parched_apocalypse",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776624778986,
+      "tag": "0002_plain_skullbuster",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1776624992444,
+      "tag": "0003_useful_aaron_stack",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1776626306467,
+      "tag": "0004_mute_pretty_boy",
+      "breakpoints": true
     }
   ]
 }

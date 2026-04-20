@@ -75,7 +75,7 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
           />
         ) : (
           <div
-            className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center group-hover:scale-105 transition-transform duration-500`}
+            className={`w-full h-full bg-linear-to-br ${gradient} flex items-center justify-center group-hover:scale-105 transition-transform duration-500`}
           >
             <span className="text-5xl drop-shadow-sm">{emoji}</span>
           </div>
@@ -128,7 +128,7 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
             <div className="w-5 h-5 rounded-full bg-pink-100 flex items-center justify-center text-[10px] font-bold text-pink-500 shadow-sm border border-pink-200">
               {recipe.user.name.charAt(0).toUpperCase()}
             </div>
-            <span className="text-[10px] text-gray-700 font-semibold truncate max-w-[120px]">
+            <span className="text-[10px] text-gray-700 font-semibold truncate max-w-30">
               {recipe.user.name}
             </span>
           </div>
@@ -137,14 +137,16 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
 
       {/* Content */}
       <div className="p-4 space-y-3">
-        <div>
-          <h3 className="font-semibold text-gray-800 text-base leading-snug line-clamp-1 group-hover:text-pink-500 transition-colors">
-            {recipe.title}
-          </h3>
-          <p className="text-sm text-gray-500 mt-1 line-clamp-2 leading-relaxed">
-            {recipe.description}
-          </p>
-        </div>
+        <Link href={`/recipes/${recipe.id}/view`}>
+          <div>
+            <h3 className="font-semibold text-gray-800 text-base leading-snug line-clamp-1 group-hover:text-pink-500 transition-colors">
+              {recipe.title}
+            </h3>
+            <p className="text-sm text-gray-500 mt-1 line-clamp-2 leading-relaxed">
+              {recipe.description}
+            </p>
+          </div>
+        </Link>
 
         {/* Meta row */}
         <div className="flex items-center gap-3 text-xs text-gray-500">
