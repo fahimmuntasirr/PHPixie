@@ -54,11 +54,19 @@ export interface Recipe {
 
 interface RecipeCardProps {
   recipe: Recipe;
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
+  showActions?: boolean;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  statusLabel?: string;
 }
 
-export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
+export default function RecipeCard({
+  recipe,
+  showActions = false,
+  onEdit,
+  onDelete,
+  statusLabel,
+}: RecipeCardProps) {
   const emoji = CATEGORY_EMOJI[recipe.category] ?? "🍽️";
   const gradient = CATEGORY_GRADIENTS[recipe.category] ?? "from-gray-200 via-slate-200 to-gray-300";
   const difficultyColor = DIFFICULTY_COLORS[recipe.difficulty] ?? "bg-gray-50 text-gray-600 border-gray-200";
@@ -88,39 +96,50 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
           </span>
         </div>
 
-        {/* Action buttons overlay */}
-        <div className="absolute top-3 right-3 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <button
-            onClick={() => onEdit(recipe.id)}
-            className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-600 hover:text-pink-500 hover:bg-white shadow-sm transition-all"
-            aria-label="Edit recipe"
-            id={`edit-recipe-${recipe.id}`}
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
-          </button>
-          <button
-            onClick={() => onDelete(recipe.id)}
-            className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-600 hover:text-red-500 hover:bg-white shadow-sm transition-all"
-            aria-label="Delete recipe"
-            id={`delete-recipe-${recipe.id}`}
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              />
-            </svg>
-          </button>
-        </div>
+        {/* Status / action overlay */}
+        {(statusLabel || showActions) && (
+          <div className="absolute top-3 right-3 flex items-center gap-1.5">
+            {statusLabel && (
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-semibold uppercase tracking-wider text-emerald-600 shadow-sm">
+                {statusLabel}
+              </span>
+            )}
+            {showActions && onEdit && onDelete && (
+              <>
+                <button
+                  onClick={() => onEdit(recipe.id)}
+                  className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-600 hover:text-pink-500 hover:bg-white shadow-sm transition-all"
+                  aria-label="Edit recipe"
+                  id={`edit-recipe-${recipe.id}`}
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => onDelete(recipe.id)}
+                  className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-600 hover:text-red-500 hover:bg-white shadow-sm transition-all"
+                  aria-label="Delete recipe"
+                  id={`delete-recipe-${recipe.id}`}
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                </button>
+              </>
+            )}
+          </div>
+        )}
 
         {/* Author badge overlay */}
         {recipe.user && (

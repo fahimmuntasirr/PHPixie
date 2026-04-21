@@ -2,12 +2,10 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import RecipeCard, { type Recipe } from "@/components/recipes/recipe-card";
-import DeleteRecipeDialog from "@/components/recipes/delete-recipe-dialog";
 
 const CATEGORIES = [
   "All",
@@ -24,14 +22,11 @@ const CATEGORIES = [
 const DIFFICULTIES = ["All", "Easy", "Medium", "Hard", "Expert"];
 
 export default function RecipesPage() {
-  const router = useRouter();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [difficultyFilter, setDifficultyFilter] = useState("All");
-  const [deleteTarget, setDeleteTarget] = useState<Recipe | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -80,32 +75,6 @@ export default function RecipesPage() {
       return matchesSearch && matchesCategory && matchesDifficulty;
     });
   }, [recipes, search, categoryFilter, difficultyFilter]);
-
-  const handleEdit = (id: string) => {
-    router.push(`/recipes/${id}/edit`);
-  };
-
-  const handleDeleteClick = (id: string) => {
-    const recipe = recipes.find((r) => r.id === id);
-    if (recipe) setDeleteTarget(recipe);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!deleteTarget) return;
-    setIsDeleting(true);
-    try {
-      const res = await fetch(`/api/recipes/${deleteTarget.id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to delete");
-      setRecipes((prev) => prev.filter((r) => r.id !== deleteTarget.id));
-    } catch (error) {
-      console.error("Error deleting recipe:", error);
-    } finally {
-      setDeleteTarget(null);
-      setIsDeleting(false);
-    }
-  };
 
   const stats = useMemo(() => {
     return {
@@ -159,7 +128,7 @@ export default function RecipesPage() {
 
             {/* Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
-              <div className="bg-gradient-to-br from-pink-50 to-pink-100/50 rounded-xl p-4 border border-pink-100">
+              <div className="bg-linear-to-br from-pink-50 to-pink-100/50 rounded-xl p-4 border border-pink-100">
                 <p className="text-2xl font-bold text-pink-500">
                   {stats.total}
                 </p>
@@ -167,7 +136,7 @@ export default function RecipesPage() {
                   Total Recipes
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-violet-50 to-violet-100/50 rounded-xl p-4 border border-violet-100">
+              <div className="bg-linear-to-br from-violet-50 to-violet-100/50 rounded-xl p-4 border border-violet-100">
                 <p className="text-2xl font-bold text-violet-500">
                   {stats.categories}
                 </p>
@@ -175,7 +144,7 @@ export default function RecipesPage() {
                   Categories
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-xl p-4 border border-emerald-100">
+              <div className="bg-linear-to-br from-emerald-50 to-emerald-100/50 rounded-xl p-4 border border-emerald-100">
                 <p className="text-2xl font-bold text-emerald-500">
                   {stats.easy}
                 </p>
@@ -183,7 +152,7 @@ export default function RecipesPage() {
                   Easy Recipes
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl p-4 border border-amber-100">
+              <div className="bg-linear-to-br from-amber-50 to-amber-100/50 rounded-xl p-4 border border-amber-100">
                 <p className="text-2xl font-bold text-amber-500">
                   {stats.expert}
                 </p>
@@ -196,7 +165,7 @@ export default function RecipesPage() {
         </section>
 
         {/* Filters */}
-        <section className="bg-white border-b border-gray-100 sticky top-[57px] z-40">
+        <section className="bg-white border-b border-gray-100 sticky top-14.25 z-40">
           <div className="max-w-7xl mx-auto px-6 py-4">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
               {/* Search */}
@@ -281,8 +250,6 @@ export default function RecipesPage() {
                   <RecipeCard
                     key={recipe.id}
                     recipe={recipe}
-                    onEdit={handleEdit}
-                    onDelete={handleDeleteClick}
                   />
                 ))}
               </div>
@@ -326,15 +293,6 @@ export default function RecipesPage() {
         </section>
       </main>
       <Footer />
-
-      {/* Delete Dialog */}
-      <DeleteRecipeDialog
-        recipeName={deleteTarget?.title ?? ""}
-        isOpen={!!deleteTarget}
-        isDeleting={isDeleting}
-        onConfirm={handleDeleteConfirm}
-        onCancel={() => setDeleteTarget(null)}
-      />
     </>
   );
 }

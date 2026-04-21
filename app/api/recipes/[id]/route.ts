@@ -1,6 +1,8 @@
 import { db } from "@/db/config";
 import { recipe, recipeIngredient, recipeStep } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 // GET /api/recipes/[id] — Get a single recipe
 export async function GET(
@@ -43,6 +45,26 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const existing = await db.query.recipe.findFirst({
+      where: (r, { eq }) => eq(r.id, id),
+    });
+
+    if (!existing) {
+      return Response.json({ error: "Recipe not found" }, { status: 404 });
+    }
+
+    if (existing.userId !== session.user.id) {
+      return Response.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const body = await request.json();
     const {
       title,
@@ -57,15 +79,6 @@ export async function PUT(
       ingredients,
       steps,
     } = body;
-
-    // Check recipe exists
-    const existing = await db.query.recipe.findFirst({
-      where: (r, { eq }) => eq(r.id, id),
-    });
-
-    if (!existing) {
-      return Response.json({ error: "Recipe not found" }, { status: 404 });
-    }
 
     await db.transaction(async (tx) => {
       // Update recipe fields
@@ -150,12 +163,24 @@ export async function DELETE(
   try {
     const { id } = await params;
 
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const existing = await db.query.recipe.findFirst({
       where: (r, { eq }) => eq(r.id, id),
     });
 
     if (!existing) {
       return Response.json({ error: "Recipe not found" }, { status: 404 });
+    }
+
+    if (existing.userId !== session.user.id) {
+      return Response.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Cascade delete will remove ingredients and steps

@@ -2,9 +2,10 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { User, Mail, Calendar, Settings, ShoppingBag, BookOpen } from "lucide-react";
+import { Mail, Calendar, ShoppingBag, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EditProfileButton } from "./edit-profile-button";
+import ProfileRecipeGrid from "@/components/profile/profile-recipe-grid";
 import { db } from "@/db/config";
 import { recipe, marketplaceProduct } from "@/db/schema";
 import { eq, inArray, desc } from "drizzle-orm";
@@ -58,7 +59,7 @@ export default async function ProfilePage() {
         
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           {/* Cover Photo / Header area */}
-          <div className="h-32 bg-gradient-to-r from-pink-400 to-pink-300"></div>
+          <div className="h-32 bg-linear-to-r from-pink-400 to-pink-300"></div>
           
           <div className="px-8 pb-8">
             {/* Avatar Row */}
@@ -130,7 +131,7 @@ export default async function ProfilePage() {
               {recipesWithListingState.length === 0 ? (
                 <div className="bg-gray-50 rounded-xl p-8 text-center border border-gray-100">
                   <BookOpen className="w-8 h-8 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-500 text-sm mb-4">You haven't created any recipes yet.</p>
+                  <p className="text-gray-500 text-sm mb-4">You haven&apos;t created any recipes yet.</p>
                   <Link href="/recipes/create">
                     <Button className="bg-pink-400 hover:bg-pink-500 text-white rounded-full px-6 h-9 text-sm font-medium">
                       Create your first recipe
@@ -138,38 +139,7 @@ export default async function ProfilePage() {
                   </Link>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {recipesWithListingState.map((r) => (
-                    <Link key={r.id} href={`/recipes/${r.id}/view`} className="group flex flex-col bg-white border border-gray-100 rounded-xl overflow-hidden hover:shadow-md transition-all">
-                      <div className="aspect-[16/9] bg-gray-100 relative overflow-hidden">
-                        {r.imageUrl ? (
-                          <img 
-                            src={r.imageUrl} 
-                            alt={r.title} 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">
-                            <BookOpen className="w-8 h-8" />
-                          </div>
-                        )}
-                        {r.listed && (
-                          <div className="absolute top-2 right-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider shadow-sm">
-                            Listed
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-4 flex flex-col flex-1">
-                        <div className="text-xs font-medium text-pink-500 uppercase tracking-wider mb-1">{r.category}</div>
-                        <h4 className="font-semibold text-gray-900 text-base line-clamp-1 group-hover:text-pink-600 transition-colors">{r.title}</h4>
-                        <div className="mt-auto pt-3 flex items-center justify-between text-xs text-gray-500">
-                          <span>{r.difficulty}</span>
-                          <span>{new Date(r.createdAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                <ProfileRecipeGrid recipes={recipesWithListingState} />
               )}
             </div>
             
