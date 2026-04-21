@@ -1,0 +1,121 @@
+<mxfile host="app.diagrams.net" modified="2026-04-22T00:00:00.000Z" agent="GitHub Copilot" version="24.7.17" type="device">
+  <diagram id="phpixie-system-design-top-down" name="PHPixie Top-Down Design">
+    <mxGraphModel dx="1800" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="2200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="PHPixie - System Design (Top-Down)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=26;fontStyle=1;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="500" y="20" width="800" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="subtitle" value="Reference-style hierarchical flow: Root -&gt; Features -&gt; APIs -&gt; Services -&gt; Database" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontColor=#4B5563;" vertex="1" parent="1">
+          <mxGeometry x="430" y="58" width="940" height="24" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n1" value="PHPixie Platform&#xa;(Next.js 16 Application)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#111827;fillColor=#F3F4F6;fontColor=#111827;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="730" y="110" width="340" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n2" value="Public Experience&#xa;Home, About, Search" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#1F2937;fillColor=#FFFFFF;fontColor=#111827;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="250" width="280" height="68" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n3" value="Authentication Module&#xa;Sign-Up, Sign-In" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#1F2937;fillColor=#FFFFFF;fontColor=#111827;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="250" width="280" height="68" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n4" value="Recipe Module&#xa;Create, Edit, View, My Recipes" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#1F2937;fillColor=#FFFFFF;fontColor=#111827;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="890" y="250" width="280" height="68" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n5" value="Marketplace Module&#xa;Browse, Sell, Buy" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#1F2937;fillColor=#FFFFFF;fontColor=#111827;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="250" width="280" height="68" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n6" value="UI Components Layer&#xa;navbar, footer, recipe-card, forms" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#374151;fillColor=#F9FAFB;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="150" y="390" width="280" height="62" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n7" value="Better Auth Route Handler&#xa;/api/auth/[...all]" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#374151;fillColor=#F9FAFB;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="520" y="390" width="280" height="62" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n8" value="Recipe APIs&#xa;/api/recipes, /api/recipes/[id], /my-recipes" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#374151;fillColor=#F9FAFB;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="890" y="390" width="280" height="62" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n9" value="Marketplace APIs&#xa;/api/recipes/sell + marketplace pages" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#374151;fillColor=#F9FAFB;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="390" width="280" height="62" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n10" value="Application API Layer&#xa;(Next.js Route Handlers + Validation + Ownership Checks)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#111827;fillColor=#E5E7EB;fontColor=#111827;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="520" width="600" height="72" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n11" value="Auth Service&#xa;Better Auth Session + Account Logic" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#1F2937;fillColor=#FFFFFF;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="250" y="660" width="360" height="64" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n12" value="Data Service&#xa;Drizzle ORM + Neon Serverless Pool" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#1F2937;fillColor=#FFFFFF;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="720" y="660" width="360" height="64" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n13" value="Environment Config&#xa;DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#1F2937;fillColor=#FFFFFF;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="660" width="360" height="64" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n14" value="Neon PostgreSQL Database" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#111827;fillColor=#E5E7EB;fontColor=#111827;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="800" width="380" height="68" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n15" value="Auth Tables&#xa;user, session, account, verification" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#374151;fillColor=#FFFFFF;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="210" y="940" width="360" height="72" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n16" value="Recipe Tables&#xa;recipe, recipe_ingredient, recipe_step" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#374151;fillColor=#FFFFFF;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="670" y="940" width="360" height="72" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n17" value="Marketplace Table&#xa;marketplace_product (unique recipeId)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#374151;fillColor=#FFFFFF;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="940" width="360" height="72" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n18" value="Key Data Relationships&#xa;recipe.userId -&gt; user.id&#xa;ingredient/step.recipeId -&gt; recipe.id&#xa;marketplace_product.recipeId -&gt; recipe.id" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#6B7280;fillColor=#F9FAFB;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="560" y="1060" width="560" height="96" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n1" target="n2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n1" target="n3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n1" target="n4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n1" target="n5"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#374151;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n2" target="n6"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#374151;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n3" target="n7"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#374151;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n4" target="n8"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#374151;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n5" target="n9"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n6" target="n10"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n7" target="n10"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n8" target="n10"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n9" target="n10"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n10" target="n11"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n10" target="n12"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n10" target="n13"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n11" target="n14"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n12" target="n14"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#111827;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n13" target="n14"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#374151;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n14" target="n15"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#374151;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n14" target="n16"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#374151;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n14" target="n17"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#6B7280;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n15" target="n18"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#6B7280;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n16" target="n18"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#6B7280;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="n17" target="n18"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
