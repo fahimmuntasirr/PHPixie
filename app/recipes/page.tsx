@@ -33,7 +33,6 @@ export default function RecipesPage() {
   const [deleteTarget, setDeleteTarget] = useState<Recipe | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Fetch recipes from API
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
@@ -231,11 +230,10 @@ export default function RecipesPage() {
                   <button
                     key={cat}
                     onClick={() => setCategoryFilter(cat)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-                      categoryFilter === cat
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${categoryFilter === cat
                         ? "bg-pink-400 text-white shadow-sm"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }`}
+                      }`}
                     id={`category-filter-${cat.toLowerCase()}`}
                   >
                     {cat}
