@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Ingredient {
   id: string;
@@ -225,7 +226,7 @@ export default function RecipeForm({
             Basic Information
           </h2>
         </div>
-        <div className="p-6 space-y-5">
+        <div className="p-4 sm:p-6 space-y-5">
           {/* Title */}
           <div>
             <label
@@ -307,19 +308,18 @@ export default function RecipeForm({
               >
                 Category <span className="text-pink-400">*</span>
               </label>
-              <select
-                id="recipe-category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className={selectClasses}
-              >
-                <option value="">Select category</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger id="recipe-category" className={selectClasses}>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.category && (
                 <p className="text-xs text-red-500 mt-1">{errors.category}</p>
               )}
@@ -331,19 +331,18 @@ export default function RecipeForm({
               >
                 Difficulty <span className="text-pink-400">*</span>
               </label>
-              <select
-                id="recipe-difficulty"
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value)}
-                className={selectClasses}
-              >
-                <option value="">Select difficulty</option>
-                {DIFFICULTIES.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
+              <Select value={difficulty} onValueChange={setDifficulty}>
+                <SelectTrigger id="recipe-difficulty" className={selectClasses}>
+                  <SelectValue placeholder="Select difficulty" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DIFFICULTIES.map((d) => (
+                    <SelectItem key={d} value={d}>
+                      {d}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {errors.difficulty && (
                 <p className="text-xs text-red-500 mt-1">{errors.difficulty}</p>
               )}
@@ -423,7 +422,7 @@ export default function RecipeForm({
             Ingredients
           </h2>
         </div>
-        <div className="p-6 space-y-3">
+        <div className="p-4 sm:p-6 space-y-3">
           {errors.ingredients && (
             <p className="text-xs text-red-500">{errors.ingredients}</p>
           )}
@@ -435,7 +434,7 @@ export default function RecipeForm({
               <span className="w-6 h-9 flex items-center justify-center text-xs text-gray-400 font-medium shrink-0">
                 {index + 1}
               </span>
-              <div className="flex-1 grid grid-cols-[1fr_80px_100px] gap-2">
+              <div className="flex-1 grid grid-cols-2 sm:grid-cols-[1fr_80px_100px] gap-2">
                 <input
                   type="text"
                   placeholder="Ingredient name"
@@ -443,7 +442,7 @@ export default function RecipeForm({
                   onChange={(e) =>
                     updateIngredient(ingredient.id, "name", e.target.value)
                   }
-                  className={inputClasses}
+                  className={`${inputClasses} col-span-2 sm:col-span-1`}
                 />
                 <input
                   type="text"
@@ -454,24 +453,28 @@ export default function RecipeForm({
                   }
                   className={inputClasses}
                 />
-                <select
+                <Select
                   value={ingredient.unit}
-                  onChange={(e) =>
-                    updateIngredient(ingredient.id, "unit", e.target.value)
+                  onValueChange={(value) =>
+                    updateIngredient(ingredient.id, "unit", value)
                   }
-                  className={selectClasses}
                 >
-                  {UNITS.map((u) => (
-                    <option key={u} value={u}>
-                      {u}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className={selectClasses}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {UNITS.map((u) => (
+                      <SelectItem key={u} value={u}>
+                        {u}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <button
                 type="button"
                 onClick={() => removeIngredient(ingredient.id)}
-                className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all shrink-0 opacity-0 group-hover:opacity-100"
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all shrink-0 sm:opacity-0 sm:group-hover:opacity-100"
                 aria-label="Remove ingredient"
               >
                 <svg
@@ -523,7 +526,7 @@ export default function RecipeForm({
             Instructions
           </h2>
         </div>
-        <div className="p-6 space-y-3">
+        <div className="p-4 sm:p-6 space-y-3">
           {errors.steps && (
             <p className="text-xs text-red-500">{errors.steps}</p>
           )}
@@ -589,7 +592,7 @@ export default function RecipeForm({
               <button
                 type="button"
                 onClick={() => removeStep(step.id)}
-                className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all shrink-0 opacity-0 group-hover:opacity-100 mt-1"
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all shrink-0 sm:opacity-0 sm:group-hover:opacity-100 mt-1"
                 aria-label="Remove step"
               >
                 <svg
@@ -641,7 +644,7 @@ export default function RecipeForm({
             Tags
           </h2>
         </div>
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <div className="flex gap-2 mb-3">
             <input
               type="text"
@@ -695,19 +698,19 @@ export default function RecipeForm({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-end gap-3 pt-2">
+      <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-2">
         <Button
           type="button"
           onClick={onCancel}
           variant="outline"
-          className="border-gray-200 text-gray-600 hover:bg-gray-50 rounded-xl px-6 h-10 text-sm font-medium"
+          className="border-gray-200 text-gray-600 hover:bg-gray-50 rounded-xl px-6 h-10 text-sm font-medium w-full sm:w-auto"
         >
           Cancel
         </Button>
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="bg-pink-400 hover:bg-pink-500 text-white rounded-xl px-8 h-10 text-sm font-semibold shadow-lg shadow-pink-200/50 border-none disabled:opacity-50"
+          className="bg-pink-400 hover:bg-pink-500 text-white rounded-xl px-8 h-10 text-sm font-semibold shadow-lg shadow-pink-200/50 border-none disabled:opacity-50 w-full sm:w-auto"
         >
           {isSubmitting ? (
             <span className="flex items-center gap-2">

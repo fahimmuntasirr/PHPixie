@@ -7,6 +7,7 @@ import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db/config";
 import { marketplaceProduct, recipe } from "@/db/schema";
+import { createPurchaseAction } from "./actions";
 
 const CATEGORY_EMOJIS: Record<string, string> = {
   Tools: "🔧",
@@ -168,13 +169,15 @@ export default async function BuyProductPage({
                 </div>
 
                 <div className="mt-6 space-y-3">
-                  <Link
-                    href={successHref}
-                    className="w-full h-11 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors inline-flex items-center justify-center gap-2"
-                  >
-                    Buy Now
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
+                  <form action={createPurchaseAction.bind(null, product.id)}>
+                    <button
+                      type="submit"
+                      className="w-full h-11 rounded-xl bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition-colors inline-flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      Buy Now
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </form>
 
                   {recipeHref ? (
                     <Link
