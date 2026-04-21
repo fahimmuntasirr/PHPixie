@@ -35,7 +35,7 @@ export default function CreateRecipePage() {
       <main className="flex-1 bg-gray-50/50">
         {/* Header */}
         <section className="bg-white border-b border-gray-100">
-          <div className="max-w-3xl mx-auto px-6 py-8">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-gray-500 mb-4">
               <Link
@@ -89,7 +89,7 @@ export default function CreateRecipePage() {
         </section>
 
         {/* Form */}
-        <section className="max-w-3xl mx-auto px-6 py-8">
+        <section className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <RecipeForm
             onSubmit={handleSubmit}
             onCancel={() => router.push("/recipes")}
